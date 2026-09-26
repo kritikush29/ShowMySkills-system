@@ -22,6 +22,7 @@ export default function Footer() {
               href="https://github.com/xyphx/ShowMySkills-system"
               target="_blank"
               rel="noreferrer"
+              aria-label="GitHub repository"
               className="p-2 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white transition-colors"
             >
               <Github className="w-4 h-4" />
