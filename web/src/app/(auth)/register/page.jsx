@@ -127,11 +127,7 @@ export default function RegisterPage() {
       data.append('collegeId', formData.collegeId);
       data.append('collegeIdFile', formData.collegeIdFile);
 
-      await apiRequest(
-        '/auth/register',
-        'POST',
-        data
-      );
+      await apiRequest('/auth/register', 'POST', data);
 
       setMessage(
         'Registration successful! OTP has been sent to your email.'
@@ -142,7 +138,6 @@ export default function RegisterPage() {
           `/verify-email?email=${encodeURIComponent(formData.email)}`
         );
       }, 500);
-
     } catch (error) {
       setError(
         error.message || 'Registration failed. Please try again.'
@@ -152,40 +147,44 @@ export default function RegisterPage() {
     }
   };
 
+  const inputClass =
+    'w-full px-4 py-3 bg-white border border-slate-300 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-100';
+
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <div className="w-full max-w-md bg-slate-900 border border-slate-800 p-8 rounded-xl shadow-2xl">
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50 flex items-center justify-center p-6">
 
-        <h2 className="text-2xl font-bold text-slate-100 mb-2">
-          Create Account
-        </h2>
+      <div className="w-full max-w-2xl bg-white rounded-3xl shadow-xl border border-slate-100 p-8 md:p-10">
 
-        <p className="text-slate-400 text-sm mb-6">
-          Register as a student on ShowMySkills.
-        </p>
+        {/* Heading */}
+        <div className="text-center mb-8">
+          <h1 className="text-3xl md:text-4xl font-bold text-slate-900">
+            Create Your Account
+          </h1>
 
-        {message && (
-          <p className="text-sm text-green-400 mb-4">
-            {message}
+          <p className="text-slate-500 mt-2">
+            Join ShowMySkills and showcase your skills
           </p>
+        </div>
+
+        {/* Messages */}
+        {message && (
+          <div className="mb-5 p-3 rounded-lg bg-emerald-50 text-emerald-600 text-sm text-center">
+            {message}
+          </div>
         )}
 
         {error && (
-          <p className="text-sm text-red-400 mb-4">
+          <div className="mb-5 p-3 rounded-lg bg-red-50 text-red-600 text-sm text-center">
             {error}
-          </p>
+          </div>
         )}
 
-        <form
-          onSubmit={handleSubmit}
-          noValidate
-          className="space-y-4"
-        >
+        <form onSubmit={handleSubmit} noValidate className="space-y-5">
 
           {/* Name */}
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">
-              Name
+            <label className="block text-sm font-medium text-slate-700 mb-2">
+              Full Name
             </label>
 
             <input
@@ -194,68 +193,71 @@ export default function RegisterPage() {
               placeholder="Enter your name"
               value={formData.name}
               onChange={handleChange}
-              className="w-full px-4 py-2 bg-slate-950 border border-slate-800 rounded-lg text-slate-200 focus:outline-none focus:border-indigo-500"
+              className={inputClass}
             />
           </div>
 
-          {/* Email */}
-          <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">
-              Email
-            </label>
+          {/* Email + Phone */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
 
-            <input
-              type="email"
-              name="email"
-              placeholder="Enter your email"
-              value={formData.email}
-              onChange={handleChange}
-              className="w-full px-4 py-2 bg-slate-950 border border-slate-800 rounded-lg text-slate-200 focus:outline-none focus:border-indigo-500"
-            />
-          </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-2">
+                Email
+              </label>
 
-          {/* Phone */}
-          <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">
-              Phone
-            </label>
+              <input
+                type="email"
+                name="email"
+                placeholder="Email address"
+                value={formData.email}
+                onChange={handleChange}
+                className={inputClass}
+              />
+            </div>
 
-            <input
-              type="tel"
-              name="phone"
-              inputMode="numeric"
-              maxLength={10}
-              placeholder="Enter 10-digit phone number"
-              value={formData.phone}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  phone: e.target.value.replace(/\D/g, '')
-                })
-              }
-              className="w-full px-4 py-2 bg-slate-950 border border-slate-800 rounded-lg text-slate-200 focus:outline-none focus:border-indigo-500"
-            />
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-2">
+                Phone
+              </label>
+
+              <input
+                type="tel"
+                name="phone"
+                inputMode="numeric"
+                maxLength={10}
+                placeholder="10-digit phone"
+                value={formData.phone}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    phone: e.target.value.replace(/\D/g, '')
+                  })
+                }
+                className={inputClass}
+              />
+            </div>
+
           </div>
 
           {/* Password */}
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">
+            <label className="block text-sm font-medium text-slate-700 mb-2">
               Password
             </label>
 
             <input
               type="password"
               name="password"
-              placeholder="Enter password"
+              placeholder="Create a password"
               value={formData.password}
               onChange={handleChange}
-              className="w-full px-4 py-2 bg-slate-950 border border-slate-800 rounded-lg text-slate-200 focus:outline-none focus:border-indigo-500"
+              className={inputClass}
             />
           </div>
 
           {/* College */}
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">
+            <label className="block text-sm font-medium text-slate-700 mb-2">
               College
             </label>
 
@@ -265,47 +267,53 @@ export default function RegisterPage() {
               placeholder="Enter your college"
               value={formData.college}
               onChange={handleChange}
-              className="w-full px-4 py-2 bg-slate-950 border border-slate-800 rounded-lg text-slate-200 focus:outline-none focus:border-indigo-500"
+              className={inputClass}
             />
           </div>
 
-          {/* Graduation Year */}
-          <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">
-              Graduation Year
-            </label>
+          {/* Graduation + College ID */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
 
-            <select
-              name="graduationYear"
-              value={formData.graduationYear}
-              onChange={handleChange}
-              className="w-full px-4 py-2 bg-slate-950 border border-slate-800 rounded-lg text-slate-200 focus:outline-none focus:border-indigo-500"
-            >
-              <option value="">Select graduation year</option>
-              <option value="2026">2026</option>
-              <option value="2027">2027</option>
-              <option value="2028">2028</option>
-              <option value="2029">2029</option>
-              <option value="2030">2030</option>
-            </select>
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-2">
+                Graduation Year
+              </label>
+
+              <select
+                name="graduationYear"
+                value={formData.graduationYear}
+                onChange={handleChange}
+                className={inputClass}
+              >
+                <option value="">Select year</option>
+                <option value="2026">2026</option>
+                <option value="2027">2027</option>
+                <option value="2028">2028</option>
+                <option value="2029">2029</option>
+                <option value="2030">2030</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-2">
+                College ID
+              </label>
+
+              <input
+                type="text"
+                name="collegeId"
+                placeholder="College ID number"
+                value={formData.collegeId}
+                onChange={handleChange}
+                className={inputClass}
+              />
+            </div>
+
           </div>
 
-          {/* College ID */}
+          {/* College ID Upload */}
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">
-              College ID
-            </label>
-
-            <input
-              type="text"
-              name="collegeId"
-              placeholder="Enter your college ID"
-              value={formData.collegeId}
-              onChange={handleChange}
-              className="w-full px-4 py-2 bg-slate-950 border border-slate-800 rounded-lg text-slate-200 focus:outline-none focus:border-indigo-500"
-            />
-
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mt-4 mb-1">
+            <label className="block text-sm font-medium text-slate-700 mb-2">
               Upload College ID
             </label>
 
@@ -315,16 +323,16 @@ export default function RegisterPage() {
               accept="image/jpeg,image/png"
               capture="environment"
               onChange={handleFileChange}
-              className="w-full px-4 py-2 bg-slate-950 border border-slate-800 rounded-lg text-slate-200"
+              className="w-full px-4 py-3 bg-white border border-slate-300 rounded-xl text-slate-600 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-teal-50 file:text-teal-700"
             />
 
-            <p className="text-xs text-slate-500 mt-1">
-              Upload a JPG or PNG photo of your college ID. Maximum size: 5MB.
+            <p className="text-xs text-slate-400 mt-2">
+              JPG or PNG only • Maximum 5MB
             </p>
 
             {formData.collegeIdFile && (
-              <p className="text-xs text-green-400 mt-2">
-                Selected: {formData.collegeIdFile.name}
+              <p className="text-xs text-emerald-600 mt-2">
+                ✓ {formData.collegeIdFile.name}
               </p>
             )}
           </div>
@@ -333,12 +341,25 @@ export default function RegisterPage() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg disabled:opacity-50"
+            className="w-full py-3.5 bg-teal-500 hover:bg-teal-600 text-white font-semibold rounded-xl transition disabled:opacity-50 shadow-sm"
           >
             {isLoading ? 'Creating Account...' : 'Create Account'}
           </button>
 
         </form>
+
+        {/* Login */}
+        <p className="text-center text-sm text-slate-500 mt-7">
+          Already have an account?{' '}
+          <button
+            type="button"
+            onClick={() => router.push('/login')}
+            className="text-teal-600 font-semibold hover:text-teal-700"
+          >
+            Sign In
+          </button>
+        </p>
+
       </div>
     </div>
   );
