@@ -19,6 +19,7 @@ import {
   Briefcase,
   Building2,
   BadgeCheck,
+  AlertCircle,
 } from "lucide-react";
 
 import DashboardSidebar from "@/components/DashboardSidebar";
@@ -696,22 +697,68 @@ export default function InternshipsPage() {
               {/* Internship Swipe Deck */}
               <div className="relative w-[400px] sm:w-[430px] md:w-[450px] lg:w-[460px] h-[400px] sm:h-[430px] md:h-[450px] lg:h-[460px] max-w-[92vw] aspect-square mb-2 sm:mb-2.5 flex items-center justify-center shrink-0">
                 {loading ? (
-                  <div className="flex flex-col items-center gap-3 text-sm text-gray-500">
-                    <div className="w-8 h-8 border-4 border-[#4B9C93]/20 border-t-[#4B9C93] rounded-full animate-spin" />
-                    Loading internships...
+                  <div className="w-full h-full aspect-square bg-white rounded-2xl p-6 sm:p-7 border border-gray-100 shadow-xl shadow-black/5 flex flex-col justify-between overflow-hidden relative select-none animate-pulse">
+                    {/* Top row skeleton */}
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 rounded-xl bg-gray-200" />
+                        <div className="space-y-2">
+                          <div className="h-4 w-32 bg-gray-200 rounded-md" />
+                          <div className="h-3 w-20 bg-gray-100 rounded-md" />
+                        </div>
+                      </div>
+                      <div className="h-5 w-16 bg-gray-100 rounded-full" />
+                    </div>
+
+                    {/* Middle skeleton */}
+                    <div className="space-y-3 my-auto">
+                      <div className="h-5 w-3/4 bg-gray-200 rounded-md" />
+                      <div className="flex gap-2">
+                        <div className="h-6 w-20 bg-gray-100 rounded-full" />
+                        <div className="h-6 w-24 bg-gray-100 rounded-full" />
+                        <div className="h-6 w-16 bg-gray-100 rounded-full" />
+                      </div>
+                      <div className="space-y-1.5 pt-1">
+                        <div className="h-3 w-full bg-gray-100 rounded-sm" />
+                        <div className="h-3 w-5/6 bg-gray-100 rounded-sm" />
+                      </div>
+                    </div>
+
+                    {/* Bottom spinner overlay / indicator */}
+                    <div className="flex items-center justify-center gap-2.5 pt-2 border-t border-gray-100 text-xs font-medium text-gray-500">
+                      <div className="w-4 h-4 border-2 border-[#4B9C93]/30 border-t-[#4B9C93] rounded-full animate-spin" />
+                      Loading discovery deck...
+                    </div>
                   </div>
                 ) : apiError ? (
-                  <div className="w-full h-full bg-white rounded-2xl p-6 text-center shadow-lg flex flex-col items-center justify-center">
-                    <p className="text-sm text-red-600 mb-4">{apiError}</p>
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="w-full h-full aspect-square bg-white rounded-2xl p-6 sm:p-8 border border-gray-100 shadow-xl shadow-black/5 flex flex-col items-center justify-center text-center select-none"
+                  >
+                    <div className="w-14 h-14 rounded-full bg-rose-50 border border-rose-200/60 flex items-center justify-center text-rose-500 mb-3.5">
+                      <AlertCircle className="w-7 h-7" />
+                    </div>
+
+                    <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-1.5">
+                      Unable to load internships
+                    </h3>
+
+                    <p className="text-xs sm:text-sm text-gray-500 max-w-[320px] mb-5 leading-relaxed">
+                      {apiError ||
+                        "We couldn't connect to the server to fetch opportunities. Please check your network and try again."}
+                    </p>
 
                     <button
+                      id="retry-fetch-btn"
                       type="button"
-                      onClick={() => fetchInternships()}
-                      className="px-5 py-2 rounded-full bg-[#4B9C93] text-white text-xs sm:text-sm font-semibold hover:bg-[#3d867e]"
+                      onClick={() => fetchInternships(filters)}
+                      className="px-5 py-2.5 rounded-full bg-[#4B9C93] text-white text-xs sm:text-sm font-semibold hover:bg-[#3d867e] active:scale-95 shadow-md shadow-[#4B9C93]/25 transition-all duration-200 flex items-center gap-2 cursor-pointer"
                     >
+                      <RotateCcw className="w-4 h-4" />
                       Try Again
                     </button>
-                  </div>
+                  </motion.div>
                 ) : filteredCards.length > 0 ? (
                   <AnimatePresence>
                     {filteredCards.slice(0, 3).map((internship, index) => (
@@ -729,33 +776,89 @@ export default function InternshipsPage() {
                   </AnimatePresence>
                 ) : (
                   <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
+                    initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="w-full h-full aspect-square bg-white rounded-2xl p-6 sm:p-7 border border-gray-100 shadow-xl shadow-black/5 flex flex-col items-center justify-center text-center"
+                    className="w-full h-full aspect-square bg-white rounded-2xl p-6 sm:p-7 border border-gray-100 shadow-xl shadow-black/5 flex flex-col items-center justify-center text-center select-none"
                   >
-                    <div className="w-12 h-12 rounded-full bg-[#E6F7F3] border border-[#4B9C93]/20 flex items-center justify-center text-[#4B9C93] mb-3">
-                      <CheckCircle className="w-6 h-6" />
-                    </div>
+                    {Boolean(
+                      searchQuery.trim() ||
+                        filters.mode ||
+                        filters.location ||
+                        filters.skill ||
+                        filters.verified
+                    ) ? (
+                      <>
+                        <div className="w-14 h-14 rounded-full bg-amber-50 border border-amber-200/60 flex items-center justify-center text-amber-600 mb-3.5">
+                          <Search className="w-7 h-7" />
+                        </div>
 
-                    <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-1">
-                      {searchQuery ? "No matches found" : "All caught up! 🎉"}
-                    </h3>
+                        <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-1">
+                          No matching internships
+                        </h3>
 
-                    <p className="text-xs sm:text-sm text-gray-500 max-w-[320px] mb-4 leading-relaxed">
-                      {searchQuery
-                        ? "Try another company, role, or skill."
-                        : "No more new internships in the discovery deck. You can reload the list to review the opportunities again."}
-                    </p>
+                        <p className="text-xs sm:text-sm text-gray-500 max-w-[320px] mb-5 leading-relaxed">
+                          No opportunities matched your active search or filters. Try adjusting your criteria or clearing filters.
+                        </p>
 
-                    <button
-                      id="reload-deck-btn"
-                      type="button"
-                      onClick={handleReloadDeck}
-                      className="px-5 py-2 rounded-full bg-[#4B9C93] text-white text-xs sm:text-sm font-semibold hover:bg-[#3d867e] active:scale-95 shadow-md shadow-[#4B9C93]/25 transition-all duration-200 flex items-center gap-2 cursor-pointer"
-                    >
-                      <RotateCcw className="w-3.5 h-3.5" />
-                      Reload Internships
-                    </button>
+                        <button
+                          id="clear-filters-btn"
+                          type="button"
+                          onClick={handleResetFilters}
+                          className="px-5 py-2.5 rounded-full bg-[#4B9C93] text-white text-xs sm:text-sm font-semibold hover:bg-[#3d867e] active:scale-95 shadow-md shadow-[#4B9C93]/25 transition-all duration-200 flex items-center gap-2 cursor-pointer"
+                        >
+                          <RotateCcw className="w-3.5 h-3.5" />
+                          Clear Filters & Search
+                        </button>
+                      </>
+                    ) : allInternships.length > 0 ? (
+                      <>
+                        <div className="w-14 h-14 rounded-full bg-[#E6F7F3] border border-[#4B9C93]/25 flex items-center justify-center text-[#4B9C93] mb-3.5">
+                          <CheckCircle className="w-7 h-7" />
+                        </div>
+
+                        <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-1">
+                          All caught up! 🎉
+                        </h3>
+
+                        <p className="text-xs sm:text-sm text-gray-500 max-w-[320px] mb-5 leading-relaxed">
+                          No more new internships in your discovery deck. You can reload the list to review the opportunities again.
+                        </p>
+
+                        <button
+                          id="reload-deck-btn"
+                          type="button"
+                          onClick={handleReloadDeck}
+                          className="px-5 py-2.5 rounded-full bg-[#4B9C93] text-white text-xs sm:text-sm font-semibold hover:bg-[#3d867e] active:scale-95 shadow-md shadow-[#4B9C93]/25 transition-all duration-200 flex items-center gap-2 cursor-pointer"
+                        >
+                          <RotateCcw className="w-3.5 h-3.5" />
+                          Reload Internships
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <div className="w-14 h-14 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-400 mb-3.5">
+                          <Briefcase className="w-7 h-7" />
+                        </div>
+
+                        <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-1">
+                          No internships available
+                        </h3>
+
+                        <p className="text-xs sm:text-sm text-gray-500 max-w-[320px] mb-5 leading-relaxed">
+                          There are currently no internship postings available in the system. Check back soon for new opportunities.
+                        </p>
+
+                        <button
+                          id="refresh-feed-btn"
+                          type="button"
+                          onClick={() => fetchInternships()}
+                          className="px-5 py-2.5 rounded-full bg-[#4B9C93] text-white text-xs sm:text-sm font-semibold hover:bg-[#3d867e] active:scale-95 shadow-md shadow-[#4B9C93]/25 transition-all duration-200 flex items-center gap-2 cursor-pointer"
+                        >
+                          <RotateCcw className="w-3.5 h-3.5" />
+                          Refresh Feed
+                        </button>
+                      </>
+                    )}
                   </motion.div>
                 )}
               </div>
